@@ -1,7 +1,6 @@
 require 'test_helper'
 require 'generators/generators_test_helper'
 require "generators/angular/install/install_generator"
-require 'mocha'
 
 class InstallGeneratorTest < Rails::Generators::TestCase
   include GeneratorsTestHelper
@@ -10,8 +9,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   def setup
     mkdir_p "#{destination_root}/app/assets/javascripts"
     cp fixture("application.js"), "#{destination_root}/app/assets/javascripts"
-    Rails.application.class.stubs(:name).returns("Dummy::Application")
-
     super
   end
 
@@ -51,7 +48,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     
     assert_file "app/assets/javascripts/application.js" do |application|
-      assert_match /require angular.min(.*)require angle-up(.*)require_tree \.\/angular/m, application
+      assert_match /require angular(.*)require_tree \.\/angular/m, application
     end
   end  
   

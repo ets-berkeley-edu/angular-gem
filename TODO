@@ -1,5 +1,0 @@
-- rake task that pulls down relevant resources more easily from code.angular.js
-- change tests to rspec tests
-! there has to be a better way to test the gem then throwing a dummy application under test...
-- update gemspec summary
-- improve generator if possible

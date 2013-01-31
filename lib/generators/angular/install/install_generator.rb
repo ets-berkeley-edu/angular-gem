@@ -14,7 +14,7 @@ module Angular
 
       def inject_angular
         append_to_file "app/assets/javascripts/application.js" do
-          "//= require angular.min\n//= require_tree ./angular\n"
+          "//= require angular\n//= require_tree ./angular\n"
         end
       end
 

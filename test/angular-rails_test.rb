@@ -6,7 +6,7 @@ class AngularjsRailsTest < ActiveSupport::TestCase
   end
 
   test "angular.js is found as an asset" do
-    assert_not_nil @app.assets["angular.min"]
+    assert_not_nil @app.assets["angular"]
   end
 
 end
