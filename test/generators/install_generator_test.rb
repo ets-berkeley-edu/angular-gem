@@ -6,12 +6,12 @@ require 'mocha'
 class InstallGeneratorTest < Rails::Generators::TestCase
   include GeneratorsTestHelper
   tests Angular::Generators::InstallGenerator
-  
+
   def setup
     mkdir_p "#{destination_root}/app/assets/javascripts"
     cp fixture("application.js"), "#{destination_root}/app/assets/javascripts"
     Rails.application.class.stubs(:name).returns("Dummy::Application")
-    
+
     super
   end
 
@@ -23,7 +23,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "Assert angular directory structure is created" do
     run_generator
-    
+
     %W{controllers filters services widgets}.each do |dir|
       assert_directory "#{angular_path}/#{dir}"
       assert_file "#{angular_path}/#{dir}/.gitkeep"

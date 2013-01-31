@@ -1,3 +1,3 @@
 module AngularRails
-  VERSION = "0.0.12"
+  VERSION = "1.1.2"
 end
