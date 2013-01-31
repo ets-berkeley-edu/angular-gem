@@ -1,6 +1,6 @@
 require "rails/engine"
 
-module AngularRails
+module AngularjsRails
 	class Engine < Rails::Engine
 	end
 end

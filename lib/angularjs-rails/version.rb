@@ -1,3 +1,3 @@
-module AngularRails
+module AngularjsRails
   VERSION = "1.1.2"
 end
