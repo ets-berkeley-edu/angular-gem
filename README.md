@@ -1,4 +1,4 @@
-# Angular-Gem - Just AngularJS [![Build Status](https://secure.travis-ci.org/ets-berkeley-edu/angular-gem.png)](http://travis-ci.org/ets-berkeley-edu/angular-Gem)
+# Angular-Gem - Just AngularJS [![Build Status](https://secure.travis-ci.org/ets-berkeley-edu/angular-gem.png)](http://travis-ci.org/ets-berkeley-edu/angular-gem)
 
 This project lets you use AngularJS with the Rails 3.x asset pipeline. It was forked from the [angular-rails gem](https://github.com/ludicast/angular-rails), since the project seems to have been abandoned and there's been a need to keep angularjs up to date within our own internal projects.
 
