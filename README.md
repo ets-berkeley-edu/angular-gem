@@ -1,33 +1,21 @@
-# Angular-Rails - The HTML6 Shiv [![Build Status](https://secure.travis-ci.org/ludicast/angular-rails.png)](http://travis-ci.org/ludicast/angular-rails)
+# Angularjs-Rails - Just AngularJS [![Build Status](https://secure.travis-ci.org/ets-berkeley-edu/angularjs-rails.png)](http://travis-ci.org/ets-berkeley-edu/angularjs-rails)
 
-This project lets you use angularjs with the yummy Rails 3.1 asset pipeline.  The eventual goal is to have it integrate scaffolding with test support.
+This project lets you use angularjs with the Rails 3.x asset pipeline. It was forked from the [angular-rails gem](https://github.com/ludicast/angular-rails), since the project seems to have been abandoned and there's been a need to keep angularjs up to date within our own internal projects.
 
-## Warning!! Code-Theft :)
+## Getting Started
 
-This README (and some of the accompanying code) is being copied/pasted/ripped from the [backbone-rails](http://github.com/codebrew/backbone-rails) project to help bootstrap things.  Later on I'll cut the cord.
+Add the gem to your application Gemfile:
 
-## Assumptions
+    gem "angularjs-rails"
 
-* Rails 3.1 - For the asset pipeline
-* Coffeescript - Because less LOC means less bugs, plus it is the Rails Way, like it or not.
-* Ruby 1.9.2 - Because I like the syntax enhancements (but if there's an outcry I can support 1.8.7)
-* RSpec - This is a loose requirement, but all specs generated will be, well rspec.  Once we have end-to-end coverage, someone can add a patch for testunit (or mini*) support.
-* RESTful controllers - another loose requirement, but it will help things be smoother for you.  The goal is as little friction as possible between the front and back ends, without resorting to Node.js :).
-
-### Installation
-
-Add to your gemfile:
-
-    gem "angular-rails"
-  
-And bundle away.  To bootstrap things then type:
+Run `bundle install`. To bootstrap things, run:
 
     rails g angular:install
 
 ### Layout and namespacing
 
 Running `rails g angular:install` will create the following directory structure under `app/assets/javascripts/angular`:
-  
+
     controllers/
     filters/
     services/
@@ -46,25 +34,3 @@ So far we have a controller generator which generates a controller file if you r
     rails g angular:controller MODELNAME
 
 This file is empty except for the class declaration, but I will be adding some RESTful controller functionality shortly.
-
-## angle-up
-
-
-In an attempt to DRY up angular apps I added the angle-up javascript file to the assets path.  [angle-up](https://github.com/ludicast/angle-up) attempts to add some opinions to angular apps.
-
-## Example Usage
-
-Created a new rails 3.1 application called `blog`.
-
-    rails new blog
-
-Edit your Gemfile and add
-
-    gem 'angular-rails'
-
-Install the gem and generate scaffolding.
-
-    bundle install
-    rails g angular:install
-  
-You now have installed the angular-rails gem, setup a default directory structure for your frontend angular code.

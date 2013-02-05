@@ -7,4 +7,3 @@ test/dummy/tmp/
 test/tmp/
 *.sw?
 *.gem
-Gemfile.lock
