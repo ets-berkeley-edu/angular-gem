@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
 
-  mount AngularjsRails::Engine => "/angularjs-rails"
+  mount AngularjsRailsAssets::Engine => "/angularjs-rails-assets"
 end

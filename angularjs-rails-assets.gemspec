@@ -1,15 +1,15 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "angularjs-rails/version"
+require "angularjs-rails-assets/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "angularjs-rails"
-  s.version     = AngularjsRails::VERSION
+  s.name        = "angularjs-rails-assets"
+  s.version     = AngularjsRailsAssets::VERSION
   s.authors     = ["Christian Vuerings", "Scot Hacker", "Yu-Hung Lin"]
   s.email       = ["vueringschristian@gmail.com", "yuhung@yuhunglin.com"]
-  s.homepage    = "http://github.com/ets-berkeley-edu/angularjs-rails"
+  s.homepage    = "http://github.com/ets-berkeley-edu/angularjs-rails-assets"
   s.summary     = "Bootstrap angularjs in a rails project"
   s.description = "Include Angularjs in rails and nothing more (ripped from angular-rails)"
 

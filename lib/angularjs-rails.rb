@@ -1,6 +1,6 @@
 require "rails/engine"
 
-module AngularjsRails
+module AngularjsRailsAssets
 	class Engine < Rails::Engine
 	end
 end
