@@ -1,12 +1,12 @@
-# Angularjs-Rails-Assets - Just AngularJS [![Build Status](https://secure.travis-ci.org/ets-berkeley-edu/angularjs-rails-assets.png)](http://travis-ci.org/ets-berkeley-edu/angularjs-rails-assets)
+# Angular-Gem - Just AngularJS [![Build Status](https://secure.travis-ci.org/ets-berkeley-edu/angular-gem.png)](http://travis-ci.org/ets-berkeley-edu/angular-Gem)
 
-This project lets you use angularjs with the Rails 3.x asset pipeline. It was forked from the [angular-rails gem](https://github.com/ludicast/angular-rails), since the project seems to have been abandoned and there's been a need to keep angularjs up to date within our own internal projects.
+This project lets you use AngularJS with the Rails 3.x asset pipeline. It was forked from the [angular-rails gem](https://github.com/ludicast/angular-rails), since the project seems to have been abandoned and there's been a need to keep angularjs up to date within our own internal projects.
 
 ## Getting Started
 
 Add the gem to your application Gemfile:
 
-    gem "angularjs-rails-assets"
+    gem "angular-gem"
 
 Run `bundle install`. To bootstrap things, run:
 

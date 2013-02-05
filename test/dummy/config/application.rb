@@ -3,7 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 Bundler.require
-require "angularjs-rails-assets"
+require "angular-gem"
 
 module Dummy
   class Application < Rails::Application

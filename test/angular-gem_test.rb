@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class AngularjsRailsAssetsTest < ActiveSupport::TestCase
+class AngularGemTest < ActiveSupport::TestCase
   def setup
     @app = Dummy::Application
   end
