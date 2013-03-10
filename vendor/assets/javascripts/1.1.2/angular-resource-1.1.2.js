@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.0.5
+ * @license AngularJS v1.1.2
  * (c) 2010-2012 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -30,7 +30,8 @@
  *   number, like this: `$resource('http://example.com\\:8080/api')`.
  *
  * @param {Object=} paramDefaults Default values for `url` parameters. These can be overridden in
- *   `actions` methods.
+ *   `actions` methods. If any of the parameter value is a function, it will be executed every time
+ *   when a param value needs to be obtained for a request (unless the param was overriden).
  *
  *   Each key value in the parameter object is first bound to url template if present and then any
  *   excess keys are appended to the url search query after the `?`.
@@ -42,21 +43,40 @@
  *   the data object (useful for non-GET operations).
  *
  * @param {Object.<Object>=} actions Hash with declaration of custom action that should extend the
- *   default set of resource actions. The declaration should be created in the following format:
+ *   default set of resource actions. The declaration should be created in the format of {@link
+ *   ng.$http#Parameters $http.config}:
  *
- *       {action1: {method:?, params:?, isArray:?},
- *        action2: {method:?, params:?, isArray:?},
+ *       {action1: {method:?, params:?, isArray:?, headers:?, ...},
+ *        action2: {method:?, params:?, isArray:?, headers:?, ...},
  *        ...}
  *
  *   Where:
  *
- *   - `action` – {string} – The name of action. This name becomes the name of the method on your
+ *   - **`action`** – {string} – The name of action. This name becomes the name of the method on your
  *     resource object.
- *   - `method` – {string} – HTTP request method. Valid methods are: `GET`, `POST`, `PUT`, `DELETE`,
- *     and `JSONP`
- *   - `params` – {object=} – Optional set of pre-bound parameters for this action.
- *   - isArray – {boolean=} – If true then the returned object for this action is an array, see
+ *   - **`method`** – {string} – HTTP request method. Valid methods are: `GET`, `POST`, `PUT`, `DELETE`,
+ *     and `JSONP`.
+ *   - **`params`** – {Object=} – Optional set of pre-bound parameters for this action. If any of the
+ *     parameter value is a function, it will be executed every time when a param value needs to be
+ *     obtained for a request (unless the param was overriden).
+ *   - **`isArray`** – {boolean=} – If true then the returned object for this action is an array, see
  *     `returns` section.
+ *   - **`transformRequest`** – `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` –
+ *     transform function or an array of such functions. The transform function takes the http
+ *     request body and headers and returns its transformed (typically serialized) version.
+ *   - **`transformResponse`** – `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` –
+ *     transform function or an array of such functions. The transform function takes the http
+ *     response body and headers and returns its transformed (typically deserialized) version.
+ *   - **`cache`** – `{boolean|Cache}` – If true, a default $http cache will be used to cache the
+ *     GET request, otherwise if a cache instance built with
+ *     {@link ng.$cacheFactory $cacheFactory}, this cache will be used for
+ *     caching.
+ *   - **`timeout`** – `{number}` – timeout in milliseconds.
+ *   - **`withCredentials`** - `{boolean}` - whether to to set the `withCredentials` flag on the
+ *     XHR object. See {@link https://developer.mozilla.org/en/http_access_control#section_5
+ *     requests with credentials} for more information.
+ *   - **`responseType`** - `{string}` - see {@link
+ *     https://developer.mozilla.org/en-US/docs/DOM/XMLHttpRequest#responseType requestType}.
  *
  * @returns {Object} A resource "class" object with methods for the default set of resource actions
  *   optionally extended with custom `actions`. The default set contains these actions:
@@ -69,9 +89,9 @@
  *
  *   Calling these methods invoke an {@link ng.$http} with the specified http method,
  *   destination and parameters. When the data is returned from the server then the object is an
- *   instance of the resource class. The actions `save`, `remove` and `delete` are available on it
- *   as  methods with the `$` prefix. This allows you to easily perform CRUD operations (create,
- *   read, update, delete) on server-side data like this:
+ *   instance of the resource class `save`, `remove` and `delete` actions are available on it as
+ *   methods with the `$` prefix. This allows you to easily perform CRUD operations (create, read,
+ *   update, delete) on server-side data like this:
  *   <pre>
         var User = $resource('/user/:userId', {userId:'@id'});
         var user = User.get({userId:123}, function() {
@@ -138,7 +158,7 @@
  * The object returned from this function execution is a resource "class" which has "static" method
  * for each action in the definition.
  *
- * Calling these methods invoke `$http` on the `url` template with the given `method` and `params`.
+ * Calling these methods invoke `$http` on the `url` template with the given `method`, `params` and `headers`.
  * When the data is returned from the server then the object is an instance of the resource type and
  * all of the non-GET methods are available with `$` prefix. This allows you to easily support CRUD
  * operations (create, read, update, delete) on server-side data.
@@ -151,9 +171,9 @@
      });
    </pre>
  *
- * It's worth noting that the success callback for `get`, `query` and other method gets passed
- * in the response that came from the server as well as $http header getter function, so one
- * could rewrite the above example and get access to http headers as:
+ *     It's worth noting that the success callback for `get`, `query` and other method gets passed
+ *     in the response that came from the server as well as $http header getter function, so one
+ *     could rewrite the above example and get access to http headers as:
  *
    <pre>
      var User = $resource('/user/:userId', {userId:'@id'});
@@ -276,7 +296,7 @@ angular.module('ngResource', ['ng']).
       this.defaults = defaults || {};
       var urlParams = this.urlParams = {};
       forEach(template.split(/\W/), function(param){
-        if (param && (new RegExp("(^|[^\\\\]):" + param + "\\W").test(template))) {
+        if (param && template.match(new RegExp("[^\\\\]:" + param + "\\W"))) {
           urlParams[param] = true;
         }
       });
@@ -330,6 +350,7 @@ angular.module('ngResource', ['ng']).
         var ids = {};
         actionParams = extend({}, paramDefaults, actionParams);
         forEach(actionParams, function(value, key){
+          if (isFunction(value)) { value = value(); }
           ids[key] = value.charAt && value.charAt(0) == '@' ? getter(data, value.substr(1)) : value;
         });
         return ids;
@@ -382,11 +403,17 @@ angular.module('ngResource', ['ng']).
           }
 
           var value = this instanceof Resource ? this : (action.isArray ? [] : new Resource(data));
-          $http({
-            method: action.method,
-            url: route.url(extend({}, extractParams(data, action.params || {}), params)),
-            data: data
-          }).then(function(response) {
+          var httpConfig = {};
+
+          forEach(action, function(value, key) {
+            if (key != 'params' && key != 'isArray' ) {
+              httpConfig[key] = copy(value);
+            }
+          });
+          httpConfig.data = data;
+          httpConfig.url = route.url(extend({}, extractParams(data, action.params || {}), params))
+
+          $http(httpConfig).then(function(response) {
               var data = response.data;
 
               if (data) {
