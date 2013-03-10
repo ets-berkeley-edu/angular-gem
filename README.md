@@ -17,7 +17,7 @@ Run `bundle install`. To bootstrap things, run:
 
 - By default, this gem will include the latest stable version of angular with ``//require angular`` in your application.<js/coffee> file.
 - You can switch to using the latest unstable version by pointing to ``//require angular-unstable``.
-- You can also force specific versions to be loaded with ``//require <VERSION>/angular-<VERSION>``, assuming the source files exist somewhere in the gem.
+- You can also force specific versions to be loaded with ``//require <VERSION>/angular-<VERSION>``, assuming the [source files](https://github.com/ets-berkeley-edu/angular-gem/tree/master/vendor/assets/javascripts) exist somewhere in the gem.
 
 ### Layout and namespacing
 
