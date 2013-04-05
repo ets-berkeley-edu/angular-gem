@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Bootstrap angularjs in a rails project"
   s.description = "Include Angularjs in rails and nothing more (ripped from angular-rails)"
 
-  s.files = Dir["{app,config,db,lib,vendor}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md"]
+  s.files = Dir["{app,config,db,lib,vendor}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.md", "CHANGELOG.md"]
   s.test_files = Dir["test/**/*"]
   s.add_dependency "railties", [">= 3.1"]
   s.add_dependency "coffee-script", '~> 2.2.0'
