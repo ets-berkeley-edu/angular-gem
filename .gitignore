@@ -7,3 +7,5 @@ test/dummy/tmp/
 test/tmp/
 *.gem
 coverage/
+.idea/*
+*.iml
