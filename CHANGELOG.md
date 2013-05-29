@@ -1,3 +1,7 @@
+## 1.1.5 (May 29, 2013)
+  - Updating unstable to 1.1.5, stable to 1.0.7. [Release Notes](https://github.com/angular/angular.js/blob/master/CHANGELOG.md)
+  - Changing syncronization schema for angular assets. Pulling resources directly from [code.angularjs.org fork](https://github.com/yuhunglin/code.angularjs.org). Now includes all js resources (including i18n support) from 1.0.7/1.1.5 forward.
+
 ## 1.1.4 (April 05, 2013)
   - Updating unstable to 1.1.4, stable to 1.0.6. [Release Notes](https://github.com/angular/angular.js/blob/master/CHANGELOG.md)
 

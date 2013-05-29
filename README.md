@@ -19,6 +19,10 @@ Run `bundle install`. To bootstrap things, run:
 - You can switch to using the latest unstable version by pointing to ``//require angular-unstable``.
 - You can also force specific versions to be loaded with ``//require <VERSION>/angular-<VERSION>``, assuming the [source files](https://github.com/ets-berkeley-edu/angular-gem/tree/master/vendor/assets/javascripts) exist somewhere in the gem.
 
+### Internationalization support ###
+
+- Internationalization (i18n) files are bundled in starting from gem version 1.1.5. You will need to specify the version of the gem you are using currently in your paths though, like so: ``//require 1.1.5/i18n/angular-locale_de``
+
 ### Layout and namespacing
 
 Running `rails g angular:install` will create the following directory structure under `app/assets/javascripts/angular`:
