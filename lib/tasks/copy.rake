@@ -41,10 +41,6 @@ task :download do |t|
   version = ENV['VERSION']
   version ||= 'latest'
   puts "Target version: #{version.chomp('/')}"
-  additional_components = ENV['COMPONENTS'].split(",") unless ENV['COMPONENTS'].nil?
-  additional_components ||= ['resource', 'sanitize']
-  components = ['angular'].concat additional_components.map{|entry| "angular-#{entry}"}
-  puts "Target components: #{components}"
   angular_root = "code.angularjs.org"
   Net::HTTP.start(angular_root) do |http|
     resp = http.get("/")
@@ -61,16 +57,31 @@ task :download do |t|
     end
   end
 
+  # Download all the files
   Dir.mkdir(File.join(js_dir, version)) unless Dir.exist?(File.join(js_dir, version))
   Dir.chdir(File.join(js_dir, version)) do
     Net::HTTP.start(angular_root) do |http|
-      components.each do |component|
-        filename = "#{component}-#{version.chomp('/')}.js"
-        next if File.exists?(filename)
-        resp = http.get("/#{version}/#{component}.js")
-        puts "Creating #{filename}" if resp.is_a?(Net::HTTPSuccess)
-        open(filename, "w") { |file| file.write(resp.body)}
+      resp = http.get("/#{version}/")
+      doc = Nokogiri::HTML(resp.body)
+      links = doc.css('a')
+      files = links.map {|link| link.attribute('href').to_s}
+      # Select everything apart from the zip file and directories
+      files = files.find_all{|item| !item.end_with?('/') && !item.end_with?('.zip')}
+
+      files.each do |file|
+        next if File.exists?(file)
+        file_download = http.get("/#{version}/#{file}")
+        puts "Creating #{file}" if file_download.is_a?(Net::HTTPSuccess)
+        open(file, "w") { |file| file.write(file_download.body)}
       end
+
+      # components.each do |component|
+      #   filename = "#{component}-#{version.chomp('/')}.js"
+      #   next if File.exists?(filename)
+      #   resp = http.get("/#{version}/#{component}.js")
+      #   puts "Creating #{filename}" if resp.is_a?(Net::HTTPSuccess)
+      #   open(filename, "w") { |file| file.write(resp.body)}
+      # end
     end
   end
 end

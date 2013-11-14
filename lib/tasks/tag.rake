@@ -14,10 +14,6 @@ end
 task :tag do |t|
   version = ENV['VERSION']
   version ||= 'latest'
-  additional_components = ENV['COMPONENTS'].split(",") unless ENV['COMPONENTS'].nil?
-  additional_components ||= ['resource', 'sanitize']
-  components = ['angular.js'].concat additional_components.map{|entry| "angular-#{entry}.js"}
-
   unstable_tag = ENV['UNSTABLE_TAG'] || ''
 
   puts "Target version: #{version.chomp('/')}"
@@ -28,12 +24,7 @@ task :tag do |t|
       puts "WARN: Specified version='#{version}' not found, setting to latest version: '#{version_directories.first}'"
       version = version_directories.first
     end
-    new_files = Hash[*Dir.glob("#{version}/*.js").map {|longfn| [longfn.split(version+'/', 2)[1].chomp("-#{version}.js")+'.js', longfn]}.flatten]
-    # Make sure all the components we want are there before overwriting.
-    if !(new_files.keys & components == components)
-      puts "ERROR: Target version directory does not contain all the components for updating: #{components}"
-      exit
-    end
+    new_files = Hash[*Dir.glob("#{version}/*.js").map {|longfn| [longfn.split(version+'/', 2)[1].chomp("-#{version}.js"), longfn]}.flatten]
 
     new_files.keys.each do |file|
       FileUtils.cp new_files[file], file.chomp('.js')+unstable_tag+'.js', {verbose: true}
