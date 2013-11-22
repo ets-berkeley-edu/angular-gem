@@ -25,14 +25,12 @@ task :copy do |t|
   source_version = File.join(source_dir, version)
   cp_r source_version, js_dir
   rm_rf File.join(js_dir, version, 'docs')
+  rm_rf File.join(js_dir, version, 'i18n')
   Dir.chdir(File.join(js_dir, version)) do
-    %w(zip min.js json txt).each do |file_ext|
+    %w(zip min.js json txt js.map css).each do |file_ext|
       rm Dir.glob("*.#{file_ext}")
     end
 
-    Dir.glob("*.js") do |file|
-      mv file, "#{file[0..-4]}-#{version}.js"
-    end
   end
 end
 
@@ -66,7 +64,8 @@ task :download do |t|
       links = doc.css('a')
       files = links.map {|link| link.attribute('href').to_s}
       # Select everything apart from the zip file and directories
-      files = files.find_all{|item| !item.end_with?('/') && !item.end_with?('.zip')}
+      # files = files.find_all{|item| !item.end_with?('/') && !item.end_with?('.zip')}
+      files = files.find_all{|item| !item.end_with?('min.js') && item.end_with?('.js')}
 
       files.each do |file|
         next if File.exists?(file)
