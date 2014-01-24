@@ -14,3 +14,21 @@
 1. Run ``gem build angular-gem.gemspec`` to package the gem
 1. Do some testing locally against some project that uses the gem (say, like calcentral) to make sure everything work properly.
 1. Once satisfied, push the gem up to RubyGems.org with ``gem push angular-gem-<VERSION>.gem``
+
+## How your workflow might look like:
+
+1) Change the version in version.rb
+2) Execute the following commands:
+
+```
+rake download VERSION=1.2.9
+rake tag_default
+git add .
+git commit -am "v1.2.9 Release"
+git tag -a 1.2.9 -m "v1.2.9 Release"
+git push ets master
+git push --tags ets master
+gem build angular-gem.gemspec
+gem push angular-gem-1.2.9.gem
+rm angular-gem-1.2.9.gem
+```
