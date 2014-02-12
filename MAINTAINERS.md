@@ -17,12 +17,12 @@
 
 ## How your workflow might look like:
 
-1) Change the version in version.rb
-2) Execute the following commands:
+1. Change the version in version.rb
+2. Execute the following commands:
 
 ```
 rake download VERSION=1.2.9
-rake tag_default
+rake tag_default VERSION=1.2.9
 git add .
 git commit -am "v1.2.9 Release"
 git tag -a 1.2.9 -m "v1.2.9 Release"
