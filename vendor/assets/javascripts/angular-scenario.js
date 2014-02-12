@@ -9790,7 +9790,7 @@ if ( typeof module === "object" && module && typeof module.exports === "object" 
 })( window );
 
 /**
- * @license AngularJS v1.2.10
+ * @license AngularJS v1.2.9
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -9860,7 +9860,7 @@ function minErr(module) {
       return match;
     });
 
-    message = message + '\nhttp://errors.angularjs.org/1.2.10/' +
+    message = message + '\nhttp://errors.angularjs.org/1.2.9/' +
       (module ? module + '/' : '') + code;
     for (i = 2; i < arguments.length; i++) {
       message = message + (i == 2 ? '?' : '&') + 'p' + (i-2) + '=' +
@@ -11626,11 +11626,11 @@ function setupModuleLoader(window) {
  * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
  */
 var version = {
-  full: '1.2.10',    // all of these placeholder strings will be replaced by grunt's
+  full: '1.2.9',    // all of these placeholder strings will be replaced by grunt's
   major: 1,    // package task
   minor: 2,
-  dot: 10,
-  codeName: 'augmented-serendipity'
+  dot: 9,
+  codeName: 'enchanted-articulacy'
 };
 
 
@@ -13072,9 +13072,11 @@ function annotate(fn) {
  * @param {(Object|function())} provider If the provider is:
  *
  *   - `Object`: then it should have a `$get` method. The `$get` method will be invoked using
- *     {@link AUTO.$injector#invoke $injector.invoke()} when an instance needs to be created.
- *   - `Constructor`: a new instance of the provider will be created using                     
- *     {@link AUTO.$injector#instantiate $injector.instantiate()}, then treated as `object`.
+ *               {@link AUTO.$injector#invoke $injector.invoke()} when an instance needs to be
+ *               created.
+ *   - `Constructor`: a new instance of the provider will be created using
+ *               {@link AUTO.$injector#instantiate $injector.instantiate()}, then treated as
+ *               `object`.
  *
  * @returns {Object} registered provider instance
 
@@ -16853,14 +16855,31 @@ function $HttpProvider() {
      * XMLHttpRequest will transparently follow it, meaning that the error callback will not be
      * called for such responses.
      *
+     * # Calling $http from outside AngularJS
+     * The `$http` service will not actually send the request until the next `$digest()` is
+     * executed. Normally this is not an issue, since almost all the time your call to `$http` will
+     * be from within a `$apply()` block.
+     * If you are calling `$http` from outside Angular, then you should wrap it in a call to
+     * `$apply` to cause a $digest to occur and also to handle errors in the block correctly.
+     *
+     * ```
+     * $scope.$apply(function() {
+     *   $http(...);
+     * });
+     * ```
+     *
      * # Writing Unit Tests that use $http
-     * When unit testing (using {@link api/ngMock ngMock}), it is necessary to call
-     * {@link api/ngMock.$httpBackend#methods_flush $httpBackend.flush()} to flush each pending
-     * request using trained responses.
+     * When unit testing you are mostly responsible for scheduling the `$digest` cycle. If you do
+     * not trigger a `$digest` before calling `$httpBackend.flush()` then the request will not have
+     * been made and `$httpBackend.expect(...)` expectations will fail.  The solution is to run the
+     * code that calls the `$http()` method inside a $apply block as explained in the previous
+     * section.
      *
      * ```
      * $httpBackend.expectGET(...);
-     * $http.get(...);
+     * $scope.$apply(function() {
+     *   $http.get(...);
+     * });
      * $httpBackend.flush();
      * ```
      *
@@ -18095,7 +18114,7 @@ function $IntervalProvider() {
       * In tests you can use {@link ngMock.$interval#methods_flush `$interval.flush(millis)`} to
       * move forward by `millis` milliseconds and trigger any functions scheduled to run in that
       * time.
-      *
+      * 
       * <div class="alert alert-warning">
       * **Note**: Intervals created by this service must be explicitly destroyed when you are finished
       * with them.  In particular they are not automatically destroyed when a controller's scope or a
@@ -18208,8 +18227,8 @@ function $IntervalProvider() {
           promise = deferred.promise,
           iteration = 0,
           skipApply = (isDefined(invokeApply) && !invokeApply);
-
-      count = isDefined(count) ? count : 0;
+      
+      count = isDefined(count) ? count : 0,
 
       promise.then(null, null, fn);
 
@@ -19909,7 +19928,7 @@ Parser.prototype = {
     var getter = getterFn(field, this.options, this.text);
 
     return extend(function(scope, locals, self) {
-      return getter(self || object(scope, locals));
+      return getter(self || object(scope, locals), locals);
     }, {
       assign: function(scope, value, locals) {
         return setter(object(scope, locals), field, value, parser.text, parser.options);
@@ -20485,9 +20504,9 @@ function $ParseProvider() {
  * asynchronous programming what `try`, `catch` and `throw` keywords are to synchronous programming.
  *
  * <pre>
- *   // for the purpose of this example let's assume that variables `$q`, `scope` and `okToGreet`
- *   // are available in the current lexical scope (they could have been injected or passed in).
- * 
+ *   // for the purpose of this example let's assume that variables `$q` and `scope` are
+ *   // available in the current lexical scope (they could have been injected or passed in).
+ *
  *   function asyncGreet(name) {
  *     var deferred = $q.defer();
  *
@@ -22420,7 +22439,7 @@ function $SceDelegateProvider() {
      *
      * @description
      * Returns an object that is trusted by angular for use in specified strict
-     * contextual escaping contexts (such as ng-bind-html, ng-include, any src
+     * contextual escaping contexts (such as ng-html-bind-unsafe, ng-include, any src
      * attribute interpolation, any dom event binding attribute interpolation
      * such as for onclick,  etc.) that uses the provided value.
      * See {@link ng.$sce $sce} for enabling strict contextual escaping.
@@ -22647,8 +22666,8 @@ function $SceDelegateProvider() {
  * It's important to remember that SCE only applies to interpolation expressions.
  *
  * If your expressions are constant literals, they're automatically trusted and you don't need to
- * call `$sce.trustAs` on them (remember to include the `ngSanitize` module) (e.g.
- * `<div ng-bind-html="'<b>implicitly trusted</b>'"></div>`) just works.
+ * call `$sce.trustAs` on them.  (e.g.
+ * `<div ng-html-bind-unsafe="'<b>implicitly trusted</b>'"></div>`) just works.
  *
  * Additionally, `a[href]` and `img[src]` automatically sanitize their URLs and do not pass them
  * through {@link ng.$sce#methods_getTrusted $sce.getTrusted}.  SCE doesn't play a role here.
@@ -22708,7 +22727,7 @@ function $SceDelegateProvider() {
  *      matched against the **entire** *normalized / absolute URL* of the resource being tested
  *      (even when the RegExp did not have the `^` and `$` codes.)  In addition, any flags
  *      present on the RegExp (such as multiline, global, ignoreCase) are ignored.
- *    - If you are generating your JavaScript from some other templating engine (not
+ *    - If you are generating your Javascript from some other templating engine (not
  *      recommended, e.g. in issue [#4006](https://github.com/angular/angular.js/issues/4006)),
  *      remember to escape your regular expression (and be aware that you might need more than
  *      one level of escaping depending on your templating engine and the way you interpolated
@@ -22725,7 +22744,7 @@ function $SceDelegateProvider() {
  * ## Show me an example using SCE.
  *
  * @example
-<example module="mySceApp" deps="angular-sanitize.js">
+<example module="mySceApp">
 <file name="index.html">
   <div ng-controller="myAppController as myCtrl">
     <i ng-bind-html="myCtrl.explicitlyTrustedHtml" id="explicitlyTrustedHtml"></i><br><br>
@@ -22950,8 +22969,8 @@ function $SceProvider() {
      *
      * @description
      * Delegates to {@link ng.$sceDelegate#methods_trustAs `$sceDelegate.trustAs`}.  As such,
-     * returns an object that is trusted by angular for use in specified strict contextual
-     * escaping contexts (such as ng-bind-html, ng-include, any src attribute
+     * returns an objectthat is trusted by angular for use in specified strict contextual
+     * escaping contexts (such as ng-html-bind-unsafe, ng-include, any src attribute
      * interpolation, any dom event binding attribute interpolation such as for onclick,  etc.)
      * that uses the provided value.  See * {@link ng.$sce $sce} for enabling strict contextual
      * escaping.
@@ -24629,14 +24648,11 @@ var htmlAnchorDirective = valueFn({
       element.append(document.createComment('IE fix'));
     }
 
-    if (!attr.href && !attr.xlinkHref && !attr.name) {
+    if (!attr.href && !attr.name) {
       return function(scope, element) {
-        // SVGAElement does not use the href attribute, but rather the 'xlinkHref' attribute.
-        var href = toString.call(element.prop('href')) === '[object SVGAnimatedString]' ?
-                   'xlink:href' : 'href';
         element.on('click', function(event){
           // if we have no href url, then don't navigate anywhere.
-          if (!element.attr(href)) {
+          if (!element.attr('href')) {
             event.preventDefault();
           }
         });
@@ -25403,7 +25419,7 @@ var ngFormDirective = formDirectiveFactory(true);
 */
 
 var URL_REGEXP = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?$/;
-var EMAIL_REGEXP = /^[a-z0-9!#$%&'*+/=?^_`{|}~.-]+@[a-z0-9-]+(\.[a-z0-9-]+)*$/i;
+var EMAIL_REGEXP = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,6}$/;
 var NUMBER_REGEXP = /^\s*(\-|\+)?(\d+|(\d*(\.\d*)))\s*$/;
 
 var inputType = {
@@ -25703,8 +25719,6 @@ var inputType = {
    * @param {string=} name Property name of the form under which the control is published.
    * @param {string=} ngChange Angular expression to be executed when input changes due to user
    *    interaction with the input element.
-   * @param {string} ngValue Angular expression which sets the value to which the expression should
-   *    be set when selected.
    *
    * @example
       <doc:example>
@@ -25712,26 +25726,21 @@ var inputType = {
          <script>
            function Ctrl($scope) {
              $scope.color = 'blue';
-             $scope.specialValue = {
-               "id": "12345",
-               "value": "green"
-             };
            }
          </script>
          <form name="myForm" ng-controller="Ctrl">
            <input type="radio" ng-model="color" value="red">  Red <br/>
-           <input type="radio" ng-model="color" ng-value="specialValue"> Green <br/>
+           <input type="radio" ng-model="color" value="green"> Green <br/>
            <input type="radio" ng-model="color" value="blue"> Blue <br/>
-           <tt>color = {{color | json}}</tt><br/>
+           <tt>color = {{color}}</tt><br/>
           </form>
-          Note that `ng-value="specialValue"` sets radio item's value to be the value of `$scope.specialValue`.
         </doc:source>
         <doc:scenario>
           it('should change state', function() {
-            expect(binding('color')).toEqual('"blue"');
+            expect(binding('color')).toEqual('blue');
 
             input('color').select('red');
-            expect(binding('color')).toEqual('"red"');
+            expect(binding('color')).toEqual('red');
           });
         </doc:scenario>
       </doc:example>
@@ -26589,10 +26598,7 @@ var ngModelDirective = function() {
  * @name ng.directive:ngChange
  *
  * @description
- * Evaluate the given expression when the user changes the input.
- * The expression is evaluated immediately, unlike the JavaScript onchange event
- * which only triggers at the end of a change (usually, when the user leaves the
- * form element or presses the return key).
+ * Evaluate given expression when user changes the input.
  * The expression is not evaluated when the value change is coming from the model.
  *
  * Note, this directive requires `ngModel` to be present.
@@ -27585,7 +27591,6 @@ var ngControllerDirective = [function() {
  * an element is clicked.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngClick {@link guide/expression Expression} to evaluate upon
  * click. (Event object is available as `$event`)
  *
@@ -27642,7 +27647,6 @@ forEach(
  * The `ngDblclick` directive allows you to specify custom behavior on a dblclick event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngDblclick {@link guide/expression Expression} to evaluate upon
  * a dblclick. (The Event object is available as `$event`)
  *
@@ -27666,7 +27670,6 @@ forEach(
  * The ngMousedown directive allows you to specify custom behavior on mousedown event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngMousedown {@link guide/expression Expression} to evaluate upon
  * mousedown. (Event object is available as `$event`)
  *
@@ -27690,7 +27693,6 @@ forEach(
  * Specify custom behavior on mouseup event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngMouseup {@link guide/expression Expression} to evaluate upon
  * mouseup. (Event object is available as `$event`)
  *
@@ -27713,7 +27715,6 @@ forEach(
  * Specify custom behavior on mouseover event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngMouseover {@link guide/expression Expression} to evaluate upon
  * mouseover. (Event object is available as `$event`)
  *
@@ -27737,7 +27738,6 @@ forEach(
  * Specify custom behavior on mouseenter event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngMouseenter {@link guide/expression Expression} to evaluate upon
  * mouseenter. (Event object is available as `$event`)
  *
@@ -27761,7 +27761,6 @@ forEach(
  * Specify custom behavior on mouseleave event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngMouseleave {@link guide/expression Expression} to evaluate upon
  * mouseleave. (Event object is available as `$event`)
  *
@@ -27785,7 +27784,6 @@ forEach(
  * Specify custom behavior on mousemove event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngMousemove {@link guide/expression Expression} to evaluate upon
  * mousemove. (Event object is available as `$event`)
  *
@@ -27809,7 +27807,6 @@ forEach(
  * Specify custom behavior on keydown event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngKeydown {@link guide/expression Expression} to evaluate upon
  * keydown. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
  *
@@ -27831,7 +27828,6 @@ forEach(
  * Specify custom behavior on keyup event.
  *
  * @element ANY
- * @priority 0
  * @param {expression} ngKeyup {@link guide/expression Expression} to evaluate upon
  * keyup. (Event object is available as `$event` and can be interrogated for keyCode, altKey, etc.)
  *
@@ -27878,7 +27874,6 @@ forEach(
  * attribute**.
  *
  * @element form
- * @priority 0
  * @param {expression} ngSubmit {@link guide/expression Expression} to eval. (Event object is available as `$event`)
  *
  * @example
@@ -27928,7 +27923,6 @@ forEach(
  * Specify custom behavior on focus event.
  *
  * @element window, input, select, textarea, a
- * @priority 0
  * @param {expression} ngFocus {@link guide/expression Expression} to evaluate upon
  * focus. (Event object is available as `$event`)
  *
@@ -27944,7 +27938,6 @@ forEach(
  * Specify custom behavior on blur event.
  *
  * @element window, input, select, textarea, a
- * @priority 0
  * @param {expression} ngBlur {@link guide/expression Expression} to evaluate upon
  * blur. (Event object is available as `$event`)
  *
@@ -27960,7 +27953,6 @@ forEach(
  * Specify custom behavior on copy event.
  *
  * @element window, input, select, textarea, a
- * @priority 0
  * @param {expression} ngCopy {@link guide/expression Expression} to evaluate upon
  * copy. (Event object is available as `$event`)
  *
@@ -27981,7 +27973,6 @@ forEach(
  * Specify custom behavior on cut event.
  *
  * @element window, input, select, textarea, a
- * @priority 0
  * @param {expression} ngCut {@link guide/expression Expression} to evaluate upon
  * cut. (Event object is available as `$event`)
  *
@@ -28002,7 +27993,6 @@ forEach(
  * Specify custom behavior on paste event.
  *
  * @element window, input, select, textarea, a
- * @priority 0
  * @param {expression} ngPaste {@link guide/expression Expression} to evaluate upon
  * paste. (Event object is available as `$event`)
  *
@@ -28385,13 +28375,6 @@ var ngIncludeFillContentDirective = ['$compile',
  * {@link api/ng.directive:ngRepeat `ngRepeat`}, as seen in the demo below. Besides this case, you
  * should use {@link guide/controller controllers} rather than `ngInit`
  * to initialize values on a scope.
- * </div>
- * <div class="alert alert-warning">
- * **Note**: If you have assignment in `ngInit` along with {@link api/ng.$filter `$filter`}, make
- * sure you have parenthesis for correct precedence:
- * <pre class="prettyprint">
- *   <div ng-init="test1 = (data | orderBy:'name')"></div>
- * </pre>
  * </div>
  *
  * @priority 450
@@ -29128,11 +29111,6 @@ var ngRepeatDirective = ['$parse', '$animate', function($parse, $animate) {
  *
  * Just remember to include the important flag so the CSS override will function.
  *
- * <div class="alert alert-warning">
- * **Note:** Here is a list of values that ngShow will consider as a falsy value (case insensitive):<br />
- * "f" / "0" / "false" / "no" / "n" / "[]"
- * </div>
- * 
  * ## A note about animations with ngShow
  *
  * Animations in ngShow/ngHide work with the show and hide events that are triggered when the directive expression
@@ -29281,11 +29259,6 @@ var ngShowDirective = ['$animate', function($animate) {
  * </pre>
  *
  * Just remember to include the important flag so the CSS override will function.
- * 
- * <div class="alert alert-warning">
- * **Note:** Here is a list of values that ngHide will consider as a falsy value (case insensitive):<br />
- * "f" / "0" / "false" / "no" / "n" / "[]"
- * </div>
  *
  * ## A note about animations with ngHide
  *
@@ -29757,21 +29730,14 @@ var ngOptionsMinErr = minErr('ngOptions');
  * represented by the selected option will be bound to the model identified by the `ngModel`
  * directive.
  *
- * <div class="alert alert-warning">
- * **Note:** `ngModel` compares by reference, not value. This is important when binding to an
- * array of objects. See an example {@link http://jsfiddle.net/qWzTb/ in this jsfiddle}.
- * </div>
- *
  * Optionally, a single hard-coded `<option>` element, with the value set to an empty string, can
  * be nested into the `<select>` element. This element will then represent the `null` or "not selected"
  * option. See example below for demonstration.
  *
- * <div class="alert alert-warning">
- * **Note:** `ngOptions` provides iterator facility for `<option>` element which should be used instead
+ * Note: `ngOptions` provides iterator facility for `<option>` element which should be used instead
  * of {@link ng.directive:ngRepeat ngRepeat} when you want the
  * `select` model to be bound to a non-string value. This is because an option element can only
  * be bound to string values at present.
- * </div>
  *
  * @param {string} ngModel Assignable angular expression to data-bind to.
  * @param {string=} name Property name of the form under which the control is published.
@@ -30175,7 +30141,7 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
 
           // We now build up the list of options we need (we merge later)
           for (index = 0; length = keys.length, index < length; index++) {
-
+            
             key = index;
             if (keyName) {
               key = keys[index];
