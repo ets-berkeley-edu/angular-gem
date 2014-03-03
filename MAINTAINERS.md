@@ -17,18 +17,13 @@
 
 ## How your workflow might look like:
 
-1. Change the version in version.rb
+1. Make sure the build script is executable
+
+```
+chmod +x script/update.sh
+
 2. Execute the following commands:
 
 ```
-rake download VERSION=1.2.9
-rake tag_default VERSION=1.2.9
-git add .
-git commit -am "v1.2.9 Release"
-git tag -a 1.2.9 -m "v1.2.9 Release"
-git push ets master
-git push --tags ets master
-gem build angular-gem.gemspec
-gem push angular-gem-1.2.9.gem
-rm angular-gem-1.2.9.gem
+./script/update.sh 1.2.15
 ```
