@@ -2,6 +2,7 @@ js_dir = 'vendor/assets/javascripts/'
 
 current_path = File.expand_path(File.dirname(__FILE__))
 require 'fileutils'
+require 'open-uri'
 
 desc 'Copy over source from own pruned angular.code.js repo'
 task :copy do |t|
@@ -39,48 +40,38 @@ task :download do |t|
   version = ENV['VERSION']
   version ||= 'latest'
   puts "Target version: #{version.chomp('/')}"
-  angular_root = "code.angularjs.org"
-  Net::HTTP.start(angular_root) do |http|
-    resp = http.get("/")
-    doc = Nokogiri::HTML(resp.body)
-    links = doc.css('a')
-    known_versions = links.map {|link| link.attribute('href').to_s}.uniq.sort.reverse
-    known_versions.delete_if do |href|
-      href.empty?  || (href =~ /^([0-9]).*\/$/).nil?
-    end
+  angular_root = "https://code.angularjs.org"
+  response = open(angular_root)
+  doc = Nokogiri::HTML(response)
+  links = doc.css('a')
+  known_versions = links.map {|link| link.attribute('href').to_s}.uniq.sort.reverse
+  known_versions.delete_if do |href|
+    href.empty?  || (href =~ /^([0-9]).*\/$/).nil?
+  end
 
-    if !(known_versions.include? version + "/")
-      puts "WARN: Specified version='#{version}' not found, setting to latest version: '#{known_versions.first}'"
-      version = known_versions.first
-    end
+  if !(known_versions.include? version + "/")
+    puts "WARN: Specified version='#{version}' not found, setting to latest version: '#{known_versions.first}'"
+    version = known_versions.first
   end
 
   # Download all the files
   Dir.mkdir(File.join(js_dir, version)) unless Dir.exist?(File.join(js_dir, version))
   Dir.chdir(File.join(js_dir, version)) do
-    Net::HTTP.start(angular_root) do |http|
-      resp = http.get("/#{version}/")
-      doc = Nokogiri::HTML(resp.body)
-      links = doc.css('a')
-      files = links.map {|link| link.attribute('href').to_s}
-      # Select everything apart from the zip file and directories
-      # files = files.find_all{|item| !item.end_with?('/') && !item.end_with?('.zip')}
-      files = files.find_all{|item| !item.end_with?('min.js') && item.end_with?('.js')}
+    response = open("#{angular_root}/#{version}/")
+    doc = Nokogiri::HTML(response)
+    links = doc.css('a')
+    files = links.map {|link| link.attribute('href').to_s}
+    # Select everything apart from the zip file and directories
+    # files = files.find_all{|item| !item.end_with?('/') && !item.end_with?('.zip')}
+    files = files.find_all{|item| !item.end_with?('min.js') && item.end_with?('.js')}
 
-      files.each do |file|
-        next if File.exists?(file)
-        file_download = http.get("/#{version}/#{file}")
-        puts "Creating #{file}" if file_download.is_a?(Net::HTTPSuccess)
-        open(file, "w") { |file| file.write(file_download.body)}
+    files.each do |file|
+      next if File.exists?(file)
+      path = "#{angular_root}/#{version}/#{file}"
+      puts "Creating #{file}"
+      File.open(file, 'wb') do |filer|
+        filer.write open(path).read
       end
-
-      # components.each do |component|
-      #   filename = "#{component}-#{version.chomp('/')}.js"
-      #   next if File.exists?(filename)
-      #   resp = http.get("/#{version}/#{component}.js")
-      #   puts "Creating #{filename}" if resp.is_a?(Net::HTTPSuccess)
-      #   open(filename, "w") { |file| file.write(resp.body)}
-      # end
     end
   end
 end
