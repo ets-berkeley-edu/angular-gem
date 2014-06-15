@@ -1,19 +1,20 @@
 /**
- * @license AngularJS v1.2.16
+ * @license AngularJS v1.2.9
  * (c) 2010-2014 Google, Inc. http://angularjs.org
  * License: MIT
  */
 (function(window, angular, undefined) {'use strict';
 
 /**
- * @ngdoc module
+ * @ngdoc overview
  * @name ngCookies
  * @description
  *
  * # ngCookies
  *
- * The `ngCookies` module provides a convenient wrapper for reading and writing browser cookies.
+ * The `ngCookies` module provides a convenient wrapper for reading and writing browser cookies. 
  *
+ * {@installModule cookies}
  *
  * <div doc-module-components="ngCookies"></div>
  *
@@ -24,21 +25,21 @@
 
 angular.module('ngCookies', ['ng']).
   /**
-   * @ngdoc service
-   * @name $cookies
+   * @ngdoc object
+   * @name ngCookies.$cookies
+   * @requires $browser
    *
    * @description
    * Provides read/write access to browser's cookies.
    *
-   * Only a simple Object is exposed and by adding or removing properties to/from this object, new
-   * cookies are created/deleted at the end of current $eval.
-   * The object's properties can only be strings.
+   * Only a simple Object is exposed and by adding or removing properties to/from
+   * this object, new cookies are created/deleted at the end of current $eval.
    *
    * Requires the {@link ngCookies `ngCookies`} module to be installed.
    *
    * @example
-   <example>
-     <file name="index.html">
+   <doc:example>
+     <doc:source>
        <script>
          function ExampleController($cookies) {
            // Retrieving a cookie
@@ -47,8 +48,8 @@ angular.module('ngCookies', ['ng']).
            $cookies.myFavorite = 'oatmeal';
          }
        </script>
-     </file>
-   </example>
+     </doc:source>
+   </doc:example>
    */
    factory('$cookies', ['$rootScope', '$browser', function ($rootScope, $browser) {
       var cookies = {},
@@ -100,10 +101,12 @@ angular.module('ngCookies', ['ng']).
         for(name in cookies) {
           value = cookies[name];
           if (!angular.isString(value)) {
-            value = '' + value;
-            cookies[name] = value;
-          }
-          if (value !== lastCookies[name]) {
+            if (angular.isDefined(lastCookies[name])) {
+              cookies[name] = lastCookies[name];
+            } else {
+              delete cookies[name];
+            }
+          } else if (value !== lastCookies[name]) {
             $browser.cookies(name, value);
             updated = true;
           }
@@ -131,8 +134,8 @@ angular.module('ngCookies', ['ng']).
 
 
   /**
-   * @ngdoc service
-   * @name $cookieStore
+   * @ngdoc object
+   * @name ngCookies.$cookieStore
    * @requires $cookies
    *
    * @description
@@ -149,7 +152,8 @@ angular.module('ngCookies', ['ng']).
       return {
         /**
          * @ngdoc method
-         * @name $cookieStore#get
+         * @name ngCookies.$cookieStore#get
+         * @methodOf ngCookies.$cookieStore
          *
          * @description
          * Returns the value of given cookie key
@@ -164,7 +168,8 @@ angular.module('ngCookies', ['ng']).
 
         /**
          * @ngdoc method
-         * @name $cookieStore#put
+         * @name ngCookies.$cookieStore#put
+         * @methodOf ngCookies.$cookieStore
          *
          * @description
          * Sets a value for given cookie key
@@ -178,7 +183,8 @@ angular.module('ngCookies', ['ng']).
 
         /**
          * @ngdoc method
-         * @name $cookieStore#remove
+         * @name ngCookies.$cookieStore#remove
+         * @methodOf ngCookies.$cookieStore
          *
          * @description
          * Remove given cookie
