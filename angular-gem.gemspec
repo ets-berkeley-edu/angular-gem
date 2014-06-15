@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.name        = "angular-gem"
   s.version     = AngularGem::VERSION
   s.licenses    = ['MIT']
-  s.authors     = ["Christian Vuerings", "Yu-Hung Lin"]
-  s.email       = ["vueringschristian@gmail.com", "yuhung@yuhunglin.com"]
+  s.authors     = ["Christian Vuerings"]
+  s.email       = ["vueringschristian@gmail.com"]
   s.homepage    = "http://github.com/ets-berkeley-edu/angular-gem"
   s.summary     = "Bootstrap angularjs in a rails project"
   s.description = "Include Angularjs in rails and nothing more (ripped from angular-rails)"
