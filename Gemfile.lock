@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    angular-gem (1.2.17)
-      coffee-script (~> 2.2.0)
-      railties (>= 3.1)
+    angular-gem (1.2.18)
+      coffee-script (~> 2.2)
+      railties (~> 3.1)
 
 GEM
   remote: https://rubygems.org/
@@ -84,7 +84,7 @@ PLATFORMS
 
 DEPENDENCIES
   angular-gem!
-  bundler (>= 1.2.2)
-  coveralls
-  nokogiri
-  tzinfo
+  bundler (~> 1.2)
+  coveralls (~> 0.6)
+  nokogiri (~> 1.5)
+  tzinfo (~> 0.3)
