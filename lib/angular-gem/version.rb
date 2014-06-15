@@ -1,3 +1,3 @@
 module AngularGem
-  VERSION = "1.2.18"
+  VERSION = "1.2.18.1"
 end
