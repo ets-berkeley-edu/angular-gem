@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    angular-gem (1.2.18)
+    angular-gem (1.2.19)
       coffee-script (~> 2.2)
       railties (~> 4.0)
 
